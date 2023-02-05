@@ -27,8 +27,7 @@ async function handleCreate(env: Env, request: Request): Promise<Response> {
         return status(401);
     }
 
-    let urlCount = await getUrlCount(env);
-    const urlPrefix = await getUrlPrefix(env);
+    let { urlCount, urlPrefix } = await getUrlCountAndPrefix(env);
     const url = await request.text();
 
     if (!url.startsWith("http://") && !url.startsWith("https://")) {
@@ -63,8 +62,7 @@ async function handleCreate(env: Env, request: Request): Promise<Response> {
 }
 
 async function handleGet(env: Env) {
-    const urlPrefix = await getUrlPrefix(env);
-    const urlCount = await getUrlCount(env);
+    const { urlCount, urlPrefix } = await getUrlCountAndPrefix(env);
 
     // here, we estimate the total url count by adding:
     //	(the number of complete groups * 1000) +
@@ -101,6 +99,17 @@ async function handleGet(env: Env) {
             }
         }
     );
+}
+
+async function getUrlCountAndPrefix(env: Env): Promise<
+    { urlCount: number, urlPrefix: number }
+> {
+    const [urlCount, urlPrefix] = await Promise.all([
+        getUrlCount(env), 
+        getUrlPrefix(env)
+    ]);
+
+    return { urlCount, urlPrefix };
 }
 
 async function getUrlCount(env: Env): Promise<number> {
