@@ -1,0 +1,9 @@
+name = "urlroulette"
+main = "src/index.ts"
+compatibility_date = "2023-02-05"
+kv_namespaces = [
+    { binding = "KV", id = "...", preview_id = "..." }
+]
+
+[vars]
+SECRET = "CHANGE_ME"
