@@ -1,6 +1,7 @@
 export interface Env {
     KV: KVNamespace;
     SECRET?: string;
+    ALLOWED_ORIGIN: string;
 }
 
 export default {
@@ -92,7 +93,14 @@ async function handleGet(env: Env) {
     const results = await env.KV.list({ prefix: `url.${targetUrlPrefix}` });
 
     // finally, we can grab a random URL from this group
-    return new Response(await env.KV.get(results.keys[rand(results.keys.length)].name));
+    return new Response(
+        await env.KV.get(results.keys[rand(results.keys.length)].name),
+        {
+            headers: {
+                "Access-Control-Allow-Origin": env.ALLOWED_ORIGIN
+            }
+        }
+    );
 }
 
 async function getUrlCount(env: Env): Promise<number> {
