@@ -12,7 +12,7 @@ export default {
     ): Promise<Response> {
         switch (request.method) {
             case "POST": return await handleCreate(env, request);
-            case "GET": return await handleGet(env);
+            case "GET": return await handleGet(env, request);
             default: return status(405);
         }
     },
@@ -61,7 +61,11 @@ async function handleCreate(env: Env, request: Request): Promise<Response> {
     return status(201);
 }
 
-async function handleGet(env: Env) {
+async function handleGet(env: Env, request: Request) {
+    if (request.url.endsWith("/stats")) {
+        return handleStats(env, request);
+    }
+
     const { urlCount, urlPrefix } = await getUrlCountAndPrefix(env);
 
     // here, we estimate the total url count by adding:
@@ -98,6 +102,23 @@ async function handleGet(env: Env) {
                 "Access-Control-Allow-Origin": env.ALLOWED_ORIGIN
             }
         }
+    );
+}
+
+async function handleStats(env: Env, request: Request) {
+    if (
+        env.SECRET && 
+        request.headers.get("Authorization") !== `Secret ${env.SECRET}`
+    ) {
+        return status(401);
+    }
+
+    return new Response(
+        JSON.stringify(
+            await getUrlCountAndPrefix(env),
+            undefined,
+            4
+        )
     );
 }
 
