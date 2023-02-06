@@ -69,8 +69,8 @@ async function handleGet(env: Env, request: Request) {
     const { urlCount, urlPrefix } = await getUrlCountAndPrefix(env);
 
     // here, we estimate the total url count by adding:
-    //	(the number of complete groups * 1000) +
-    //	the number of urls in this group
+    //  (the number of complete groups * 1000) +
+    //  the number of urls in this group
     // I say estimate here because in the future I MAY remove URLs, and those
     // URLs MAY be in groups that aren't the current one, leaving them with 999
     // or so URLs.  this probaby will never happen, but good to be clear about
@@ -78,7 +78,7 @@ async function handleGet(env: Env, request: Request) {
     //
     // for example:
     // only one url group so far, and it has 20 urls.  this will be:
-    //	(0*1000)+20 = 20
+    //  (0*1000)+20 = 20
     // 2 full url groups, and another with 500 urls.  this will be:
     //  (2*1000)+500 = 2500
     const estimatedTotalUrlCount: number = (urlPrefix * 1000) + urlCount;
